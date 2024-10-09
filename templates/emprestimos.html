@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel de Empréstimos | PET Elétrica UFU</title>
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="../static/css/style.css" />
+    <!-- ====== ionicons ======= -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+  </head>
+
+  <body>
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+      <div class="navigation">
+        <ul>
+          <!-- Logo com classe 'hovered' -->
+          <li>
+            <a href="#">
+              <span class="icon">
+                <img
+                  src="https://peteletricaufu.com.br/pet/wp-content/uploads/2023/06/favicon-32x32-1.png"
+                  alt="Logo PET Elétrica UFU"
+                />
+              </span>
+              <span class="title">PET Elétrica UFU</span>
+            </a>
+          </li>
+
+          <!-- Outros itens de navegação -->
+          <li>
+            <a href="/">
+              <span class="icon">
+                <ion-icon name="home-outline"></ion-icon>
+              </span>
+              <span class="title">Dashboard</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/usuarios">
+              <span class="icon">
+                <ion-icon name="people-outline"></ion-icon>
+              </span>
+              <span class="title">Usuários</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/produtos">
+              <span class="icon">
+                <ion-icon name="cube-outline"></ion-icon>
+              </span>
+              <span class="title">Produtos</span>
+            </a>
+          </li>
+          <li class="hovered">
+            <a href="/emprestimos">
+              <span class="icon">
+                <ion-icon name="time-outline"></ion-icon>
+              </span>
+              <span class="title">Empréstimos</span>
+            </a>
+          </li>
+
+          <!-- Itens de navegação comentados (opcional) -->
+          <!--
+          <li>
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="settings-outline"></ion-icon>
+              </span>
+              <span class="title">Settings</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+              </span>
+              <span class="title">Password</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="log-out-outline"></ion-icon>
+              </span>
+              <span class="title">Sign Out</span>
+            </a>
+          </li>
+          -->
+        </ul>
+      </div>
+
+      <!-- ========================= Main ==================== -->
+      <div class="main">
+        <div class="topbar">
+          <!-- Botão de toggle comentado (opcional) -->
+          <!--
+          <div class="toggle">
+            <ion-icon name="menu-outline"></ion-icon>
+          </div>
+          -->
+
+          <div class="search">
+            <label>
+              <input
+                id="itemSearch"
+                type="text"
+                placeholder="Digite o nome da pessoa..."
+              />
+              <ion-icon name="search-outline"></ion-icon>
+            </label>
+          </div>
+        </div>
+
+        <!-- ================ Order Details List ================= -->
+        <div class="details">
+          <div class="recentOrders">
+            <div class="cardHeader">
+              <h2>Empréstimos Ativos</h2>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <td>Nome</td>
+                  <td>Produto</td>
+                  <td>Quantidade</td>
+                  <td>Data Emprestimo</td>
+                  <td>Data Prevista Devolução</td>
+                </tr>
+              </thead>
+
+              <tbody id="ActiveEmprestimos"></tbody>
+            </table>
+          </div>
+
+          <div class="recentOrders">
+            <div class="cardHeader">
+              <h2>Empréstimos Atrasados</h2>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <td>Nome</td>
+                  <td>Produto</td>
+                  <td>Quantidade</td>
+                  <td>Data de Empréstimo</td>
+                  <td>Dias de Atraso</td>
+                </tr>
+              </thead>
+
+              <tbody id="EmprestimosAtrasados"></tbody>
+            </table>
+          </div>
+
+          <div class="recentOrders">
+            <div class="cardHeader">
+              <h2>Histórico de Empréstimos</h2>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <td>Nome</td>
+                  <td>Produto</td>
+                  <td>Quantidade</td>
+                  <td>Data de Empréstimo</td>
+                  <td>Data de Devolução</td>
+                </tr>
+              </thead>
+              <tbody id="HistoricoEmprestimos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========== Scripts =========  -->
+    <script src="../static/js/emprestimos.js"></script>
+    <script src="../static/js/index.js"></script>
+
+    <!-- ====== ionicons ======= -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+  </body>
+</html>

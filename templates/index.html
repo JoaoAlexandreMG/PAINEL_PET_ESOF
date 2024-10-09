@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel de Empréstimos | PET Elétrica UFU</title>
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="../static/css/style.css" />
+  </head>
+
+  <body>
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+      <div class="navigation">
+        <ul>
+          <li>
+            <a href="#">
+              <span class="icon">
+                <img
+                  src="https://peteletricaufu.com.br/pet/wp-content/uploads/2023/06/favicon-32x32-1.png"
+                  alt=""
+                />
+              </span>
+              <span class="title">PET Elétrica UFU</span>
+            </a>
+          </li>
+
+          <li class="hovered">
+            <a href="/">
+              <span class="icon">
+                <ion-icon name="home-outline"></ion-icon>
+              </span>
+              <span class="title">Dashboard</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/usuarios">
+              <span class="icon">
+                <ion-icon name="people-outline"></ion-icon>
+              </span>
+              <span id="users" class="title">Usuários</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/produtos">
+              <span class="icon">
+                <ion-icon name="cube-outline"></ion-icon>
+              </span>
+              <span class="title">Produtos</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/emprestimos">
+              <span class="icon">
+                <ion-icon name="time-outline"></ion-icon>
+              </span>
+              <span class="title">Emprestimos</span>
+            </a>
+          </li>
+
+          <!-- <li>
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="settings-outline"></ion-icon>
+              </span>
+              <span class="title">Settings</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+              </span>
+              <span class="title">Password</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="log-out-outline"></ion-icon>
+              </span>
+              <span class="title">Sign Out</span>
+            </a>
+          </li> -->
+        </ul>
+      </div>
+
+      <!-- ========================= Main ==================== -->
+      <div class="main">
+        <div class="topbar">
+          <!-- <div class="toggle">
+            <ion-icon name="menu-outline"></ion-icon>
+          </div> -->
+
+          <!-- <div class="search">
+            <label>
+              <input type="text" placeholder="Search here" />
+              <ion-icon name="search-outline"></ion-icon>
+            </label>
+          </div> -->
+
+          <!-- <div class="user">
+            <img src="../static/imgs/customer01.jpg" alt="" />
+          </div> -->
+        </div>
+
+        <!-- ======================= Cards ================== -->
+        <div class="cardBox">
+          <div id="emprestimoscard" class="card">
+            <div>
+              <div id="emprestimosAtivosCount" class="numbers">
+                <script>
+                  document.getElementById("emprestimoscard").addEventListener("click", function() {
+                    window.location.href = "/emprestimos";
+                  })
+                </script>
+              </div>
+              <div class="cardName">Empréstimos Ativos</div>
+            </div>
+          </div>
+          <div id="emprestimosatrasadoscard" class="card">
+            <div>
+              <div id="emprestimosAtrasadosCount" class="numbers">
+                <script>
+                  document.getElementById("emprestimosatrasadoscard").addEventListener("click", function() {
+                    window.location.href = "/emprestimos";
+                  })
+                </script>
+              </div>
+              <div class="cardName">Empréstimos Atrasados</div>
+            </div>
+          </div>
+          <div id="itenscard" class="card">
+            <div>
+              <div id="itensCount"class="numbers">
+                <script>
+                  document.getElementById("itenscard").addEventListener("click", function() {
+                    window.location.href = "/produtos";
+                  })
+                </script>
+              </div>
+              <div class="cardName">Itens no Estoque</div>
+            </div>
+          </div>
+          <div id="userscard" class="card">
+            <div>
+              <div id="usersCount"  class="numbers">
+                <script>
+                  document.getElementById("userscard").addEventListener("click", function() {
+                    window.location.href = "/usuarios";
+                  })
+                </script> 
+              </div>
+              <div class="cardName">Usuários Cadastrados</div>
+            </div>
+          </div>
+
+          <!-- <div class="card">
+            <div>
+              <div class="numbers">80</div>
+              <div class="cardName">Sales</div>
+            </div>
+
+            <div class="iconBx">
+              <ion-icon name="cart-outline"></ion-icon>
+            </div>
+          </div>
+
+          <div class="card">
+            <div>
+              <div class="numbers">284</div>
+              <div class="cardName">Comments</div>
+            </div>
+
+            <div class="iconBx">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+            </div>
+          </div>
+
+          <div class="card">
+            <div>
+              <div class="numbers">$7,842</div>
+              <div class="cardName">Earning</div>
+            </div>
+          </div> -->
+        </div>
+
+    <!-- =========== Scripts =========  -->
+    <script src="../static/js/index.js"></script>
+    <script src="../static/js/dashboard.js"></script>
+
+    <!-- ====== ionicons ======= -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+  </body>
+</html>
