@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Painel de Empréstimos | PET Elétrica UFU</title>
+    <title>Gestão de Estoque | PET Elétrica UFU</title>
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="../static/css/style.css" />
   </head>
@@ -90,7 +90,41 @@
           </li> -->
         </ul>
       </div>
-
+      <!-- Popup para Editar Itens -->
+          <div id="editItemPopup" class="popup" style="display: none;">
+            <div class="popup-content">
+              <span class="close-btn" onclick="closePopup('editItemPopup')">&times;</span>
+              <h3>Editar Item</h3>
+              <form id="editItemForm">
+                <input type="hidden" id="editItemId" name="item_id" />
+                <label for="editItemName">Nome do Item:</label>
+                <input type="text" id="editItemName" name="item_name" required />
+                <label for="editItemQuantity">Quantidade:</label>
+                <input
+                  type="number"
+                  id="editItemQuantity"
+                  name="item_quantity"
+                  required
+                />
+                <label for="editItemLocation">Localização:</label>
+                <input
+                  type="number"
+                  id="editItemLocation"
+                  name="item_location"
+                  required
+                />
+                <button class="btn btn-success" type="submit">Salvar Alterações</button>
+                <button
+                class="btn btn-danger"
+                  type="button"
+                  onclick="deleteItem()"
+                  style="background-color: red; color: white"
+                >
+                  Excluir Item
+                </button>
+              </form>
+            </div>
+          </div>
       <!-- ========================= Main ==================== -->
       <div class="main">
         <div class="topbar">
@@ -104,6 +138,7 @@
               <ion-icon name="search-outline"></ion-icon>
             </label>
           </div>
+          <button id="add_produto">Cadastrar Produto</button>
         </div>
 
         <!-- ================ Order Details List ================= -->

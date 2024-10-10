@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2 import sql
 from datetime import datetime
 import requests
+from sympy import true
 
 app = Flask(__name__)
 
@@ -12,6 +13,7 @@ DB_CONFIG = {
     "user": "postgres",
     "password": "2584",
     "host": "localhost",
+    "port": "5432",
 }
 
 
@@ -293,38 +295,34 @@ def add_user():
         data = response.json()  # Converte a resposta em JSON
         cpf_valido = data["valid"]
     if cpf_valido:
-
         conn = get_db_connection()
         cur = conn.cursor()
-        if cpf and nome and curso and telefone:
-            try:
-                # Verificar se o CPF já está cadastrado
-                cur.execute("SELECT cpf FROM usuarios WHERE cpf = %s", (cpf,))
-                if cur.fetchone():
-                    return jsonify(
-                        {
-                            "status": "error",
-                            "message": "Usuário já cadastrado com este CPF.",
-                        }
-                    )
-
-                # Adicionar novo usuário
-                cur.execute(
-                    "INSERT INTO usuarios (cpf, nome, curso, email, telefone) VALUES (%s, %s, %s, %s, %s)",
-                    (cpf, nome, curso, email, telefone),
-                )
-                conn.commit()
+        try:
+            # Verificar se o CPF já está cadastrado
+            cur.execute("SELECT cpf FROM usuarios WHERE cpf = %s", (cpf,))
+            if cur.fetchone():
                 return jsonify(
-                    {"status": "success", "message": "Usuário adicionado com sucesso"}
+                    {
+                        "status": "error",
+                        "message": "Usuário já cadastrado com este CPF.",
+                    }
                 )
-            except Exception as e:
-                conn.rollback()
-                return jsonify({"status": "error", "message": str(e)})
-            finally:
-                cur.close()
-                conn.close()
-        else:
-            return jsonify({"status": "error", "message": "Preencha Todos os Campos!"})
+
+            # Adicionar novo usuário
+            cur.execute(
+                "INSERT INTO usuarios (cpf, nome, curso, email, telefone) VALUES (%s, %s, %s, %s, %s)",
+                (cpf, nome, curso, email, telefone),
+            )
+            conn.commit()
+            return jsonify(
+                {"status": "success", "message": "Usuário adicionado com sucesso"}
+            )
+        except Exception as e:
+            conn.rollback()
+            return jsonify({"status": "error", "message": str(e)})
+        finally:
+            cur.close()
+            conn.close()
     else:
         return jsonify({"status": "error", "message": "CPF Inválido!"})
 
@@ -755,6 +753,33 @@ def edit_item():
         )
         conn.commit()
         return jsonify({"status": "success", "message": "Item atualizado com sucesso!"})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"status": "error", "message": str(e)})
+    finally:
+        cur.close()
+        conn.close()
+
+
+@app.route("/delete_user", methods=["POST"])
+def delete_user():
+    user_id = request.form["user_id"]
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    try:
+        # Verificar se o usuário existe
+        cur.execute("SELECT * FROM usuarios WHERE id = %s", (user_id,))
+        if not cur.fetchone():
+            return jsonify({"status": "error", "message": "Usuário não encontrado."})
+
+        # Deletar o usuário
+        cur.execute("DELETE FROM usuarios WHERE id = %s", (user_id,))
+        conn.commit()
+        return jsonify(
+            {"status": "success", "message": "Usuário deletado com sucesso!"}
+        )
     except Exception as e:
         conn.rollback()
         return jsonify({"status": "error", "message": str(e)})

@@ -604,18 +604,6 @@ body {
   .cardBox {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  /* Ajustes para dropdown no responsive */
-  .navigation ul li.dropdown .dropdown-menu {
-    position: static;
-    display: none;
-    background: var(--blue);
-    border-radius: 0;
-  }
-
-  .navigation.active ul li.dropdown.active .dropdown-menu {
-    display: block;
-  }
 }
 
 @media (max-width: 768px) {
@@ -627,18 +615,6 @@ body {
   }
   .status.inProgress {
     white-space: nowrap;
-  }
-
-  /* Ajustes para dropdown no responsive */
-  .navigation ul li.dropdown .dropdown-menu {
-    position: static;
-    display: none;
-    background: var(--blue);
-    border-radius: 0;
-  }
-
-  .navigation.active ul li.dropdown.active .dropdown-menu {
-    display: block;
   }
 }
 
@@ -700,4 +676,30 @@ body {
 
 .details .recentOrders table thead {
   background: var(--gray);
+}
+#add_user,
+#add_produto,
+#new_borrow {
+  background: #2a2185;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  font-weight: 900;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+#add_user:hover,
+#add_produto:hover,
+#new_borrow:hover {
+  background: #0b5ed7;
+}
+.input_add_user {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  input {
+    width: 100%;
+  }
 }
