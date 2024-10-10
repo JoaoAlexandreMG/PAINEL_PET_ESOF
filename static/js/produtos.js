@@ -29,6 +29,7 @@ function searchItems() {
               <td style="text-align: center;">
                 <button class="btn btn-primary btn-sm" onclick="openEditItemPopup(${item[0]}, '${item[1]}', ${item[3]}, '${item[2]}')">Editar</button>
               </td>
+              <td><button onclick="deleteItem(${item[0]})" class="btn btn-danger btn-sm">Excluir</button></td>
             </tr>
           `;
           itemResults.insertAdjacentHTML("beforeend", row);
@@ -43,6 +44,9 @@ function searchItems() {
 }
 function closePopup(id) {
   document.getElementById(id).style.display = "none";
+}
+function showPopup(id) {
+  document.getElementById(id).style.display = "flex";
 }
 function openEditItemPopup(itemId, itemName, itemQuantity, itemLocation) {
   document.getElementById("editItemId").value = itemId;
@@ -86,3 +90,64 @@ document
         alert("Erro ao editar o item: " + error);
       });
   });
+// Adicionar evento de submissão para o formulário de adicionar item
+document
+  .getElementById("addItemForm")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const itemName = document.getElementById("addItemName").value;
+    const itemQuantity = document.getElementById("addItemQuantity").value;
+    const itemLocation = document.getElementById("addItemLocation").value;
+
+    fetch("/add_item", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        item_name: itemName,
+        item_quantity: itemQuantity,
+        item_location: itemLocation,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert("Item adicionado com sucesso!");
+          closePopup("addItemPopup");
+          searchItems(); // Atualiza a lista de itens
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Erro ao adicionar item:", error);
+      });
+  });
+function deleteItem(itemId) {
+
+  if (confirm("Tem certeza que deseja excluir este item?")) {
+    fetch("/delete_item", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        item_id: itemId,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert("Item excluído com sucesso!");
+          searchItems(); // Atualiza a lista de itens
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Erro ao excluir item:", error);
+      });
+  }
+}

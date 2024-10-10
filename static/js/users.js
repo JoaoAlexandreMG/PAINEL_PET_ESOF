@@ -114,6 +114,7 @@ function addUser() {
         document.getElementById("email").value = "";
         document.getElementById("curso").value = "";
         closePopup("addUserPopup");
+        searchUsers();
       }
     });
 }

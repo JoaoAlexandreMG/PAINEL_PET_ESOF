@@ -90,6 +90,35 @@
           </li> -->
         </ul>
       </div>
+      <!-- Popup para Adicionar Itens -->
+      <div id="addItemPopup" class="popup" style="display: none">
+        <div class="popup-content">
+          <span class="close-btn" onclick="closePopup('addItemPopup')">&times;</span>
+          <h3>Adicionar Item ao Estoque</h3>
+          <form id="addItemForm">
+            <label for="addItemName">Nome do Item:</label>
+            <input type="text" id="addItemName" name="item_name" required />
+
+            <label for="addItemQuantity">Quantidade:</label>
+            <input
+              type="number"
+              id="addItemQuantity"
+              name="item_quantity"
+              required
+            />
+
+            <label for="addItemLocation">Localização:</label>
+            <input
+              type="number"
+              id="addItemLocation"
+              name="item_location"
+              required
+            />
+
+            <button class="btn btn-primary btn-sm" type="submit">Adicionar</button>
+          </form>
+        </div>
+      </div>
       <!-- Popup para Editar Itens -->
           <div id="editItemPopup" class="popup" style="display: none;">
             <div class="popup-content">
@@ -114,14 +143,6 @@
                   required
                 />
                 <button class="btn btn-success" type="submit">Salvar Alterações</button>
-                <button
-                class="btn btn-danger"
-                  type="button"
-                  onclick="deleteItem()"
-                  style="background-color: red; color: white"
-                >
-                  Excluir Item
-                </button>
               </form>
             </div>
           </div>
@@ -138,7 +159,7 @@
               <ion-icon name="search-outline"></ion-icon>
             </label>
           </div>
-          <button id="add_produto">Cadastrar Produto</button>
+          <button onclick="showPopup('addItemPopup')" id="add_produto">Cadastrar Produto</button>
         </div>
 
         <!-- ================ Order Details List ================= -->
@@ -156,6 +177,7 @@
                   <td>Armário</td>
                   <td>Quantidade</td>
                   <td>✏️</td>
+                  <td>🗑️</td>
                 </tr>
               </thead>
 

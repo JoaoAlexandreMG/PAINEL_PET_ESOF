@@ -68,6 +68,7 @@ body {
 .navigation ul li:nth-child(1) {
   margin-bottom: 40px;
   pointer-events: none;
+  font-weight: 900;
 }
 
 .navigation ul li a {
@@ -575,7 +576,8 @@ body {
 #itemResults button {
   color: white;
   cursor: pointer;
-  background: #0d6efd;
+  background: #2a2185;
+  font-size: 16px;
   padding: 10px;
   border: none;
   border-radius: 5px;
@@ -583,7 +585,7 @@ body {
 }
 #userResults button:hover,
 #itemResults button:hover {
-  background: #0b5ed7;
+  background: #2a2185;
 }
 
 /* ====================== Responsive Design ========================== */
@@ -679,7 +681,8 @@ body {
 }
 #add_user,
 #add_produto,
-#new_borrow {
+#new_borrow,
+#devolver_button {
   background: #2a2185;
   border: none;
   padding: 10px;
@@ -692,7 +695,8 @@ body {
 }
 #add_user:hover,
 #add_produto:hover,
-#new_borrow:hover {
+#new_borrow:hover,
+#devolver_button:hover {
   background: #0b5ed7;
 }
 .input_add_user {
@@ -702,4 +706,7 @@ body {
   input {
     width: 100%;
   }
+}
+#ActiveEmprestimos tr {
+  cursor: pointer;
 }

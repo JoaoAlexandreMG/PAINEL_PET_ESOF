@@ -122,7 +122,7 @@ def get_emprestimos_ativos():
     try:
         cur.execute(
             """
-            SELECT u.nome AS usuario_nome, i.nome AS item_nome, ih.qntd, ih.data_emprestimo, ih.data_prevista_devolucao
+            SELECT ih.id, u.nome AS usuario_nome, i.nome AS item_nome, ih.qntd, ih.data_emprestimo, ih.data_prevista_devolucao
             FROM itens_historico ih
             JOIN usuarios u ON ih.usuario_id = u.id
             JOIN itens i ON ih.item_id = i.id
@@ -133,11 +133,12 @@ def get_emprestimos_ativos():
         return jsonify(
             [
                 {
-                    "usuario_nome": item[0],
-                    "item_nome": item[1],
-                    "item_qntd": item[2],
-                    "data_emprestimo": item[3].strftime("%d/%m/%Y"),
-                    "data_prevista_devolucao": item[4].strftime("%d/%m/%Y"),
+                    "emprestimo_id": item[0],
+                    "usuario_nome": item[1],
+                    "item_nome": item[2],
+                    "item_qntd": item[3],
+                    "data_emprestimo": item[4].strftime("%d/%m/%Y"),
+                    "data_prevista_devolucao": item[5].strftime("%d/%m/%Y"),
                 }
                 for item in emprestimos_ativos
             ]
@@ -655,69 +656,24 @@ def update_item_stock():
 
 @app.route("/return_item", methods=["POST"])
 def return_item():
-    user_id = request.form["user_id"]
-    item_name = request.form["item_name"]
+    emprestimo_id = request.form["emprestimo_id"]
 
     conn = get_db_connection()
     cur = conn.cursor()
 
     try:
-        # Verificar se o item está emprestado
-        cur.execute("SELECT itens_emprestados FROM usuarios WHERE id = %s", (user_id,))
-        itens_emprestados_row = cur.fetchone()
-        itens_emprestados = itens_emprestados_row[0] if itens_emprestados_row[0] else []
-
-        # Encontrar o item no array de itens emprestados
-        item_to_return = None
-        for item in itens_emprestados:
-            if item.startswith(item_name + ":"):
-                item_to_return = item
-                break
-
-        if item_to_return is None:
-            return jsonify(
-                {
-                    "status": "error",
-                    "message": "Item não está emprestado para este usuário.",
-                }
-            )
-
-        # Remover item do array de itens emprestados
-        itens_emprestados.remove(item_to_return)
         cur.execute(
-            "UPDATE usuarios SET itens_emprestados = %s WHERE id = %s",
-            (itens_emprestados, user_id),
+            "UPDATE itens_historico SET data_devolucao=%s where id = %s",
+            (datetime.now(), emprestimo_id),
         )
-
-        # Obter o ID do item e a quantidade emprestada
-        item_quantity = int(item_to_return.split(":")[1])
-        cur.execute("SELECT id FROM itens WHERE nome = %s", (item_name,))
-        item_id_row = cur.fetchone()
-        if item_id_row is None:
-            return jsonify(
-                {
-                    "status": "error",
-                    "message": "Item não encontrado.",
-                }
-            )
-        item_id = item_id_row[0]
-
-        # Atualizar a quantidade do item no estoque
+        cur.execute(
+            "SELECT itens.id, itens_historico.qntd FROM itens_historico INNER JOIN itens ON itens_historico.item_id = itens.id WHERE itens_historico.id = %s",
+            (emprestimo_id,),
+        )
+        item_id, item_qntd = cur.fetchone()
         cur.execute(
             "UPDATE itens SET estoque = estoque + %s WHERE id = %s",
-            (item_quantity, item_id),
-        )
-
-        # Atualizar o histórico com a data de devolução
-        cur.execute(
-            """
-            UPDATE itens_historico 
-            SET data_devolucao = %s 
-            WHERE usuario_id = %s 
-              AND item_id = %s 
-              AND data_devolucao IS NULL
-            """,
-            (datetime.now(), user_id, item_id),
+            (item_qntd, item_id),
         )
 
         conn.commit()
