@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | PET Elétrica UFU</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="shortcut icon"
+      href="https://peteletricaufu.com.br/pet/wp-content/uploads/2023/09/cropped-cropped-logopet.png"
+      type="image/x-icon"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Estilos globais */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+      }
+
+      .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 400px;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        z-index: 100;
+      }
+
+      .popup.hidden {
+        display: none;
+      }
+
+      .popup-content {
+        padding: 20px;
+      }
+
+      label {
+        display: block;
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        color: #333;
+      }
+
+      input:focus {
+        border-color: #a29bfe;
+        outline: none;
+      }
+
+      button {
+        width: 100%;
+        background-color: #2a2185;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #5a4cc9;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 18px;
+        color: #aaa;
+        cursor: pointer;
+      }
+
+      .close-btn:hover {
+        color: #333;
+      }
+
+      p {
+        margin-top: 5px;
+        text-align: center;
+        font-size: 14px;
+        color: #666;
+      }
+
+      p a {
+        color: #2a2185;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      p a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 480px) {
+        .popup {
+          width: 90%;
+        }
+      }
+
+      img#imageToCrop {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      /* Estilo do modal de corte da imagem */
+      .image-cropper {
+        max-width: 100%;
+        text-align: center;
+      }
+
+      .image-cropper img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Tela de Login -->
+    <div class="popup" id="login-popup">
+      <div class="popup-content">
+        <h2>Login</h2>
+        <form action="/login" method="POST">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Digite seu email"
+            required
+          />
+
+          <label for="password">Senha</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Digite sua senha"
+            required
+          />
+
+          <button type="submit" class="btn">Entrar</button>
+        </form>
+        <p>
+          Não tem uma conta?
+          <a
+            onclick="togglePopup('register-popup'); document.title = 'Cadastro | PET Elétrica UFU'"
+            >Cadastre-se</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <!-- Tela de Cadastro -->
+    <div class="popup hidden" id="register-popup">
+      <div class="popup-content">
+        <h2>Cadastro</h2>
+        <form id="registerForm" action="/cadastrar_usuario" method="POST">
+          <label for="profile_picture">Foto de Perfil</label>
+          <input
+            type="file"
+            id="profile_picture"
+            name="profile_picture"
+            accept="image/*"
+            onchange="openImageCropper(this)"
+          />
+
+          <div id="imageCropperModal" class="popup hidden">
+            <div class="popup-content image-cropper">
+              <span class="close-btn" onclick="closeImageCropper()"
+                >&times;</span
+              >
+              <h2>Cortar Imagem</h2>
+              <img id="imageToCrop" src="#" alt="Imagem para cortar" />
+              <button type="button" class="btn" onclick="cropImage()">
+                Cortar
+              </button>
+            </div>
+          </div>
+
+          <label for="name">Nome Completo</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Digite seu nome completo"
+            required
+          />
+
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Digite seu email"
+            required
+          />
+
+          <label for="password">Senha</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Digite sua senha"
+            required
+          />
+
+          <label for="confirm_password">Confirmar Senha</label>
+          <input
+            type="password"
+            id="confirm_password"
+            name="confirm_password"
+            placeholder="Confirme sua senha"
+            required
+          />
+
+          <button type="submit" class="btn">Cadastrar</button>
+        </form>
+        <p>
+          Já tem uma conta?
+          <a
+            onclick="togglePopup('login-popup'); document.title = 'Login | PET Elétrica UFU'"
+            >Faça login</a
+          >
+        </p>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+      let cropper;
+
+      function openImageCropper(input) {
+        const file = input.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const image = document.getElementById("imageToCrop");
+            image.src = e.target.result;
+            document
+              .getElementById("imageCropperModal")
+              .classList.remove("hidden");
+
+            // Inicializar o cropper
+            if (cropper) {
+              cropper.destroy(); // Destruir o cropper anterior se existir
+            }
+            cropper = new Cropper(image, {
+              aspectRatio: 1, // Proporção do corte
+              viewMode: 1,
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      function closeImageCropper() {
+        document.getElementById("imageCropperModal").classList.add("hidden");
+        if (cropper) {
+          cropper.destroy(); // Destruir o cropper ao fechar
+          cropper = null; // Resetar a variável do cropper
+        }
+      }
+
+      function cropImage() {
+        if (cropper) {
+          const canvas = cropper.getCroppedCanvas({
+            width: 200, // Largura da imagem cortada
+            height: 200, // Altura da imagem cortada
+          });
+          canvas.toBlob(function (blob) {
+            const formData = new FormData(
+              document.getElementById("registerForm")
+            );
+            formData.append("cropped_image", blob); // Adicionar imagem cortada ao FormData
+            // Aqui você pode enviar a imagem cortada para o servidor usando fetch ou outra forma
+            console.log("Imagem cortada:", blob); // Apenas para visualização
+
+            // Fechar o modal após o corte
+            closeImageCropper();
+          });
+        }
+      }
+
+      function togglePopup(popupId) {
+        const popups = document.querySelectorAll(".popup");
+        popups.forEach((popup) => {
+          if (popup.id === popupId) {
+            popup.classList.toggle("hidden");
+          } else {
+            popup.classList.add("hidden");
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

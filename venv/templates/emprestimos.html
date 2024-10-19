@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestão de Empréstimos | PET Elétrica UFU</title>
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="../static/css/style.css" />
+    <!-- SweetAlert2 CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+
+    <!-- SweetAlert2 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link
+      rel="shortcut icon"
+      href="https://peteletricaufu.com.br/pet/wp-content/uploads/2023/09/cropped-cropped-logopet.png"
+      type="image/x-icon"
+    />
+
+    <!-- ====== ionicons ======= -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+  </head>
+
+  <body>
+    <!-- Modal -->
+    <div id="customAlert" class="modal">
+      <div class="modal-content">
+        <span class="close-btn-alert">&times;</span>
+        <p id="alertMessage">Mensagem do alerta!</p>
+      </div>
+    </div>
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+      <div class="navigation">
+        <ul>
+          <!-- Logo com classe 'hovered' -->
+          <li>
+            <a href="#">
+              <span class="icon">
+                <img
+                  src="https://peteletricaufu.com.br/pet/wp-content/uploads/2023/06/favicon-32x32-1.png"
+                  alt="Logo PET Elétrica UFU"
+                />
+              </span>
+              <span class="title">PET Elétrica UFU</span>
+            </a>
+          </li>
+
+          <!-- Outros itens de navegação -->
+          <li>
+            <a href="/">
+              <span class="icon">
+                <ion-icon name="home-outline"></ion-icon>
+              </span>
+              <span class="title">Dashboard</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/usuarios">
+              <span class="icon">
+                <ion-icon name="people-outline"></ion-icon>
+              </span>
+              <span class="title">Usuários</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/produtos">
+              <span class="icon">
+                <ion-icon name="cube-outline"></ion-icon>
+              </span>
+              <span class="title">Produtos</span>
+            </a>
+          </li>
+          <li class="hovered">
+            <a href="/emprestimos">
+              <span class="icon">
+                <ion-icon name="time-outline"></ion-icon>
+              </span>
+              <span class="title">Empréstimos</span>
+            </a>
+          </li>
+          <li>
+            <a href="/logout">
+              <span class="icon">
+                <ion-icon name="log-out-outline"></ion-icon>
+              </span>
+              <span class="title">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- Popup para Emprestar Itens -->
+      <div id="borrowItemPopup" class="popup" style="display: none">
+        <div class="borrow-popup-content">
+          <span class="borrow-close-btn" onclick="closePopup('borrowItemPopup')"
+            >&times;</span
+          >
+          <h2>Emprestar Item</h2>
+
+          <!-- Pesquisar Usuário -->
+          <div class="borrow-popup-section">
+            <label for="searchUserInput">Pesquisar Usuário:</label>
+            <input
+              type="text"
+              id="searchUserInput"
+              class="borrow-popup-input"
+              placeholder="Pesquisar..."
+            />
+            <select id="userSelect" class="borrow-popup-select">
+              select
+            </select>
+          </div>
+
+          <!-- Pesquisar Item -->
+          <div class="borrow-popup-section">
+            <label for="searchItemInput">Pesquisar Item:</label>
+            <input
+              type="text"
+              id="searchItemInput"
+              class="borrow-popup-input"
+              placeholder="Pesquisar..."
+            />
+            <div id="itemSelectContainer">
+              <select id="itemSelect" class="borrow-popup-select">
+                select
+              </select>
+              <label for="itemQuantityInput">Quantidade:</label>
+              <select
+                id="itemQuantityInput"
+                class="borrow-popup-select"
+              ></select>
+            </div>
+          </div>
+
+          <!-- Data de Devolução Prevista -->
+          <div class="borrow-popup-section">
+            <label for="DevolucaoPrevistaInput"
+              >Data prevista de devolução:</label
+            >
+            <input
+              type="date"
+              id="DevolucaoPrevistaInput"
+              class="borrow-popup-input"
+              min=""
+            />
+            <script>
+              const hoje = new Date().toISOString().split("T")[0];
+              document
+                .getElementById("DevolucaoPrevistaInput")
+                .setAttribute("min", hoje);
+            </script>
+          </div>
+
+          <!-- Botões de Ação -->
+          <div class="borrow-popup-actions">
+            <button class="btn btn-primary" onclick="borrowItemList()">
+              Adicionar Item
+            </button>
+            <button class="btn btn-secondary" onclick="limparLista()">
+              Limpar Lista
+            </button>
+            <button class="btn btn-success" onclick="borrowItem()">
+              Finalizar Empréstimo
+            </button>
+          </div>
+
+          <!-- Lista de Itens Emprestados -->
+          <ul id="lista_de_itens" class="borrow-item-list"></ul>
+        </div>
+      </div>
+      <!-- ========================= Main ==================== -->
+      <div class="main">
+        <div class="topbar">
+          <div class="search">
+            <label>
+              <input
+                id="itemSearch"
+                type="text"
+                placeholder="Digite o nome da pessoa..."
+              />
+              <ion-icon name="search-outline"></ion-icon>
+            </label>
+          </div>
+          <button onclick="showAtivos()" class="nav-btn">Ativos</button>
+          <button onclick="showAtrasados()" class="nav-btn">Atrasados</button>
+          <button onclick="showHistorico()" class="nav-btn">Histórico</button>
+          <button
+            style="background-color: #28a745"
+            onclick="showBorrowItemPopup()"
+            class="nav-btn"
+            id="new_borrow_button"
+          >
+            Novo empréstimo
+          </button>
+        </div>
+
+        <!-- ================ Order Details List ================= -->
+        <div class="details">
+          <div class="recentOrders" id="ativos" style="display: block">
+            <div class="cardHeader">
+              <h2>Empréstimos Ativos</h2>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <td>Nome</td>
+                  <td>Produto</td>
+                  <td>Quantidade</td>
+                  <td>Data Emprestimo</td>
+                  <td>Data Prevista Devolução</td>
+                  <td>🛄</td>
+                </tr>
+              </thead>
+
+              <tbody id="ActiveEmprestimos"></tbody>
+            </table>
+          </div>
+
+          <div style="display: none" class="recentOrders" id="atrasados">
+            <div class="cardHeader">
+              <h2>Empréstimos Atrasados</h2>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <td>Nome</td>
+                  <td>Produto</td>
+                  <td>Quantidade</td>
+                  <td>Data de Empréstimo</td>
+                  <td>Dias de Atraso</td>
+                </tr>
+              </thead>
+
+              <tbody id="EmprestimosAtrasados"></tbody>
+            </table>
+          </div>
+
+          <div style="display: none" class="recentOrders" id="historico">
+            <div class="cardHeader">
+              <h2>Histórico de Empréstimos</h2>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <td>Nome</td>
+                  <td>Produto</td>
+                  <td>Quantidade</td>
+                  <td>Data de Empréstimo</td>
+                  <td>Data de Devolução</td>
+                </tr>
+              </thead>
+              <tbody id="HistoricoEmprestimos"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========== Scripts =========  -->
+    <script src="../static/js/emprestimos.js"></script>
+    <script src="../static/js/alert.js"></script>
+
+    <!-- ====== ionicons ======= -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+    ></script>
+  </body>
+</html>
