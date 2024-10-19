@@ -698,7 +698,7 @@ def borrow_item():
                         {"status": "error", "message": "Item não encontrado."}
                     )
 
-                item_name, quantity_available = item_row
+                quantity_available = item_row
 
                 if quantity_available < quantity_requested:
                     return jsonify(
