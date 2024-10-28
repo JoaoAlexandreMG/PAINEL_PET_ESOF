@@ -115,7 +115,7 @@ function returnItem(emprestimo_id) {
         .then((response) => response.json())
         .then((data) => {
           if (data.status === "success") {
-            showCustomAlert("Devolu o feita com sucesso!", "success");
+            showCustomAlert("Devolução feita com sucesso!", "success");
             getActiveBorrows();
           } else {
             showCustomAlert(data.message, "error");

@@ -8,7 +8,6 @@ from flask import (
     url_for,
     session,
 )
-from flask_caching import Cache
 import psycopg2
 from psycopg2 import sql
 from datetime import datetime
@@ -17,7 +16,6 @@ import requests
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Chave secreta para criptografar sessões
-cache = Cache(app, config={"CACHE_TYPE": "simple"})  # Configuração do Cache
 
 
 # Configurações do banco de dados
@@ -40,6 +38,12 @@ def get_db_connection():
     """
     return psycopg2.connect(**DB_CONFIG)
 
+@app.route("/clear_cache", methods=["GET"])
+def clear_cache():
+    """
+    Rota para limpar todos os caches e redirecionar para a dashboard.
+    """
+    return redirect(url_for("index"))
 
 @app.route("/", methods=["GET"])
 def index():
@@ -135,7 +139,6 @@ def login():
             return jsonify({"status": "error", "message": "Email ou senha inválidos"})
         else:
             session["user"] = email  # Salva o usuário na sessão
-            cache.delete("get_profile_img")
             return redirect(url_for("index"))
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
@@ -154,7 +157,6 @@ def logout():
     
     if "user" in session:
         session.pop("user", None)  # Remove o usuário da sessão
-        cache.delete("get_profile_img")
         return render_template("login_e_cadastro.html")
     else:
         return render_template("login_e_cadastro.html")
@@ -264,7 +266,6 @@ def contar_emprestimos_atrasados():
         return render_template("login_e_cadastro.html")
 
 @app.route("/get_emprestimos_ativos", methods=["GET"])
-@cache.cached(timeout=0, key_prefix="emprestimos_ativos_cache")
 def get_emprestimos_ativos():
     """Retorna uma lista de empréstimos ativos.
 
@@ -319,7 +320,6 @@ def get_emprestimos_ativos():
         return render_template("login_e_cadastro.html")
 
 @app.route("/get_emprestimos_atrasados", methods=["GET"])
-@cache.cached(timeout=0, key_prefix="emprestimos_atrasados_cache")
 def get_emprestimos_atrasados():
     """
     Retorna uma lista de empréstimos atrasados.
@@ -429,8 +429,6 @@ def add_item():
     A resposta é um JSON com as seguintes chaves:
         - status: "success" se o item foi adicionado com sucesso, "error" caso contrário
         - message: Uma mensagem de sucesso ou erro
-
-    A resposta é cacheada por 0 segundos, sendo atualizada a cada requisição.
     """
     if "user" in session:
         item_name = request.form["item_name"]
@@ -445,7 +443,6 @@ def add_item():
                 (item_name, item_quantity, item_location),
             )
             conn.commit()
-            cache.delete("produtos_cache")
             return jsonify(
                 {"status": "success", "message": "Item adicionado com sucesso."}
             )
@@ -466,8 +463,6 @@ def add_user():
     A resposta é um JSON com as seguintes chaves:
         - status: "success" se o usuário foi adicionado com sucesso, "error" caso contrário
         - message: Uma mensagem de sucesso ou erro
-
-    A resposta é cacheada por 0 segundos, sendo atualizada a cada requisição.
     """
     if "user" in session:
         cpf = request.form["cpf"]
@@ -479,14 +474,13 @@ def add_user():
         response = requests.get(url_validador)
         if response.status_code == 200:
             data = response.json()  # Converte a resposta em JSON
-            cpf_valido = data["valid"]
-        if cpf_valido:
+        if data["valid"]:
             conn = get_db_connection()
             cur = conn.cursor()
             try:
                 # Verificar se o CPF já está cadastrado
                 cur.execute("SELECT cpf FROM usuarios WHERE cpf = %s", (cpf,))
-                if cur.fetchone():
+                if cur.fetchone() is not None:
                     return jsonify(
                         {
                             "status": "error",
@@ -500,7 +494,6 @@ def add_user():
                     (cpf, nome, curso, email, telefone),
                 )
                 conn.commit()
-                cache.delete("get_usuarios_cache")
 
                 return jsonify(
                     {"status": "success", "message": "Usuário adicionado com sucesso"}
@@ -524,8 +517,6 @@ def edit_user():
     A resposta é um JSON com as seguintes chaves:
         - status: "success" se o usuário foi atualizado com sucesso, "error" caso contrário
         - message: Uma mensagem de sucesso ou erro
-
-    A resposta é cacheada por 0 segundos, sendo atualizada a cada requisição.
     """
     if "user" in session:
         user_id = request.form.get("user_id")
@@ -549,7 +540,6 @@ def edit_user():
             conn.commit()
             cur.close()
             conn.close()
-            cache.delete("get_usuarios_cache")
             return jsonify(
                 {"status": "success", "message": "Usuário atualizado com sucesso!"}
             )
@@ -594,7 +584,6 @@ def get_item():
         return render_template("login_e_cadastro.html")
 
 @app.route("/get_users", methods=["GET"])
-@cache.cached(timeout=0, key_prefix="get_usuarios_cache")
 def get_users():
     """
     Retorna a lista de usuários com base na busca realizada.
@@ -746,7 +735,6 @@ def borrow_item():
                 )
 
             conn.commit()
-            cache.delete("emprestimos_ativos_cache")
 
             if (tamanho) == 2:
                 return jsonify(
@@ -805,8 +793,6 @@ def return_item():
             )
 
             conn.commit()
-            cache.delete("emprestimos_ativos_cache")
-            cache.delete("emprestimos_atrasados_cache")
             return jsonify(
                 {"status": "success", "message": "Item devolvido com sucesso"}
             )
@@ -859,7 +845,6 @@ def edit_item():
                 (item_name, item_quantity, item_location, item_id),
             )
             conn.commit()
-            cache.delete("produtos_cache")
             return jsonify(
                 {"status": "success", "message": "Item atualizado com sucesso!"}
             )
@@ -901,7 +886,6 @@ def delete_user():
             cur.execute("DELETE FROM itens_historico WHERE usuario_id = %s", (user_id,))
             cur.execute("DELETE FROM usuarios WHERE id = %s", (user_id,))
             conn.commit()
-            cache.delete("get_usuarios_cache")
             return jsonify(
                 {"status": "success", "message": "Usuário deletado com sucesso!"}
             )
@@ -941,7 +925,6 @@ def delete_item():
             # Deletar o item da tabela
             cur.execute("DELETE FROM itens WHERE id = %s", (item_id,))
             conn.commit()
-            cache.delete("produtos_cache")
             return jsonify(
                 {"status": "success", "message": "Item excluído com sucesso!"}
             )

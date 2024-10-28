@@ -82,13 +82,14 @@ document
       .then((data) => {
         if (data.status === "success") {
           closePopup("editItemPopup");
+          showCustomAlert("Item editado com sucesso!", "success");
           searchItems();
         } else {
-          alert("Erro ao editar o item: " + data.message);
+          showCustomAlert("Erro ao editar o item: " + data.message, "error");
         }
       })
       .catch((error) => {
-        alert("Erro ao editar o item: " + error);
+        showCustomAlert("Erro ao editar o item: " + error, "error");
       });
   });
 // Adicionar evento de submissão para o formulário de adicionar item
@@ -115,11 +116,11 @@ document
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
-          alert("Item adicionado com sucesso!");
+          showCustomAlert("Item adicionado com sucesso!", "success");
           closePopup("addItemPopup");
           searchItems(); // Atualiza a lista de itens
         } else {
-          alert(data.message);
+          showCustomAlert(data.message, "success");
         }
       })
       .catch((error) => {
@@ -140,10 +141,10 @@ function deleteItem(itemId) {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
-          alert("Item excluído com sucesso!");
+          showCustomAlert("Item excluído com sucesso!", "success");
           searchItems(); // Atualiza a lista de itens
         } else {
-          alert(data.message);
+          showCustomAlert(data.message, "success");
         }
       })
       .catch((error) => {

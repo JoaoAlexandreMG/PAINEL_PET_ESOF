@@ -77,7 +77,10 @@ function addUser() {
     .value.replace(/\D+/g, "");
   const email = document.getElementById("email").value;
   if (cpf === "" || nome === "" || curso === "" || email === "") {
-    alert("Por favor, preencha todos os campos obrigatórios.");
+    showCustomAlert(
+      "Por favor, preencha todos os campos obrigatórios.",
+      "warning"
+    );
     return;
   }
 
@@ -97,25 +100,20 @@ function addUser() {
     .then((response) => response.json())
     .then((data) => {
       if (data.status === "error") {
-        alert(data.message);
-        document.getElementById("nome").value = "";
-        document.getElementById("cpf").value = "";
-        document.getElementById("telefone").value = "";
-        document.getElementById("email").value = "";
-        document.getElementById("curso").value = "";
+        showCustomAlert(data.message, "error");
         closePopup("addUserPopup");
         document.getElementById("userSearch").value = cpf;
         searchUsers();
       } else if (data.status === "success") {
-        alert("Usuário adicionado com sucesso!");
-        document.getElementById("nome").value = "";
-        document.getElementById("cpf").value = "";
-        document.getElementById("telefone").value = "";
-        document.getElementById("email").value = "";
-        document.getElementById("curso").value = "";
+        showCustomAlert("Usuário adicionado com sucesso!", "success");
         closePopup("addUserPopup");
         searchUsers();
       }
+      document.getElementById("nome").value = "";
+      document.getElementById("cpf").value = "";
+      document.getElementById("telefone").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("curso").value = "";
     });
 }
 function deleteUser(userId) {
@@ -132,10 +130,10 @@ function deleteUser(userId) {
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
-          alert("Usuário deletado com sucesso!");
+          showCustomAlert("Usuário deletado com sucesso!", "success");
           searchUsers();
         } else {
-          alert(data.message);
+          showCustomAlert(data.message, "error");
         }
       });
   }
@@ -184,11 +182,11 @@ document
           closePopup("editUserPopup");
           searchUsers(); // Atualiza a lista de usuários após a edição
         } else {
-          alert("Erro ao editar o usuário: " + data.message);
+          showCustomAlert("Erro ao editar o usuário: " + data.message, "error");
         }
       })
       .catch((error) => {
-        alert("Erro ao editar o usuário: " + error);
+        showCustomAlert("Erro ao editar o usuário: " + error, "error");
       });
   });
 
